@@ -1,0 +1,43 @@
+using System;
+using System.IO;
+using System.Collections;
+
+
+    class Steganography
+    {
+
+
+       public static void Main(string[] args)
+        {
+           //Write your code here and do not change the class name.
+            byte[] bmpBytes = new byte[] {
+            0x42,0x4D,0x4C,0x00,0x00,0x00,0x00,0x00,
+            0x00,0x00,0x1A,0x00,0x00,0x00,0x0C,0x00,
+            0x00,0x00,0x04,0x00,0x04,0x00,0x01,0x00,
+            0x18,0x00,0x00,0x00,0xFF,0xFF,0xFF,0xFF,
+            0x00,0x00,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
+            0xFF,0x00,0x00,0x00,0xFF,0xFF,0xFF,0x00,
+            0x00,0x00,0xFF,0x00,0x00,0xFF,0xFF,0xFF,
+            0xFF,0x00,0x00,0xFF,0xFF,0xFF,0xFF,0xFF,
+            0xFF,0x00,0x00,0x00,0xFF,0xFF,0xFF,0x00,
+            0x00,0x00
+            };
+       
+        byte[] hiddenData = new byte[12];
+        string formattedString = args[0].Replace(" ", string.Empty);
+       // Console.Write(formattedString);
+        for(int i=0; i<12; i++) {
+            hiddenData[i] = Convert.ToByte(formattedString.Substring(i*2, 2), 16);
+        }
+        
+        for(int i=0; i< hiddenData.Length; i++){
+            byte inputData = hiddenData[i];
+            for(int index=0; index<4 ;index++) {
+             byte extractTwoBit = (byte)((inputData >> (6 - 2*index)) & 0x03);
+             bmpBytes[26 + i*4 + index] ^= extractTwoBit;
+            }
+        }
+         Console.WriteLine(BitConverter.ToString(bmpBytes).Replace("_",""));    
+        }
+    }
+
